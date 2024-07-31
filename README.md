@@ -1,5 +1,3 @@
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cloudacademy/terraform-azure)
-
 # CloudAcademy Terraform 1.x Azure Course
 This repo contains example Terraform configurations for building Azure infrastructure.
 
