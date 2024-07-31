@@ -1,0 +1,6 @@
+az vm image list -s "20.04-LTS" --output table
+
+az cosmosdb keys regenerate --key-kind primary --name cloudacademydevops-voteapp --resource-group  --subscription
+az cosmosdb keys list --name cloudacademydevops-voteapp --resource-group
+
+until [[ $(curl -sw '%{http_code}' -o /dev/null $(terraform output --raw load_balancer_fqdn)) -eq 200 ]]; do echo preparing... && sleep 2; done; echo -e "\nReady...\n"

@@ -1,0 +1,4 @@
+export TF_VAR_key_name=cloudacademydemo
+export TF_VAR_mongo_db_config='{"connection_string":"mongodb://cloudacademydevops-voteapp:ABCDEF1234567890L63UVU==@ca-voteapp.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@ca-voteapp@","username":"user1","password":"PASSWORDBASE64STRING_HERE=="}'
+export TF_VAR_workstation_ip=201.100.200.152/32
+export TF_VAR_management_ip=201.100.200.152/32

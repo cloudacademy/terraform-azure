@@ -1,0 +1,20 @@
+---
+- hosts: azurevms
+  gather_facts: no
+  tasks:
+
+  - name: create temp directory
+    win_file:
+      path: c:\temp
+      state: directory
+
+  - name: download app release from GH repo
+    ansible.windows.win_powershell:
+      script: |
+        echo downloading release...
+        $release = (Invoke-WebRequest -Uri "https://api.github.com/repos/jeremycook123/dotnet6app/releases/latest" -UseBasicParsing | ConvertFrom-Json)[0].assets[0].browser_download_url
+        $file = Split-Path -Path $release -Leaf
+        echo $release
+        echo $file
+        Invoke-WebRequest $release -Out c:\temp\$file
+        Expand-Archive c:\temp\$file -DestinationPath c:\cloudacademy -Force

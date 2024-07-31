@@ -1,0 +1,5 @@
+---
+- import_playbook: firewall.yml
+- import_playbook: domainjoin.yml
+- import_playbook: deployapp.yml
+- import_playbook: setupiis.yml

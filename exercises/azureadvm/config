@@ -1,0 +1,5 @@
+export TF_VAR_tenant_id=abcd1234-ab12-a1b2-1234-abcd1234efg1
+export TF_VAR_subscription_id=abcd1234-ab12-a1b2-1234-abcd1234efg1
+export TF_VAR_advm_creds='{"username":"admin","password":"PASSWORD_HERE"}'
+export TF_VAR_workstation_ip=201.100.200.152/32
+export TF_VAR_management_ip=201.100.200.152/32

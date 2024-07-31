@@ -1,0 +1,19 @@
+---
+- hosts: azurevms
+  gather_facts: no
+  vars:
+    domain_creds: "{{ lookup('ansible.builtin.env', 'TF_VAR_advm_creds') | from_json }}"
+    domain_admin_user: "{{ domain_creds | json_query('username')}}"
+    domain_admin_password: "{{ domain_creds | json_query('password')}}"
+
+  tasks:
+  - name: Domain Join
+    win_domain_membership:
+      dns_domain_name: cloudacademydevops.org
+      domain_admin_user: "{{ domain_admin_user }}@cloudacademydevops.org"
+      domain_admin_password: "{{ domain_admin_password }}"
+      state: domain
+    register: domain_state
+
+  - ansible.windows.win_reboot:
+    when: domain_state.reboot_required

@@ -1,0 +1,10 @@
+---
+- hosts: azurevms
+  gather_facts: no
+  tasks:
+
+  - name: update local firewall policy
+    ansible.windows.win_powershell:
+      script: |
+        echo allow incoming ICMP traffic...
+        New-NetFirewallRule -DisplayName "Allow ICMPv4-In" -Protocol ICMPv4

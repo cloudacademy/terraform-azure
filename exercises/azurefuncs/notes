@@ -1,0 +1,153 @@
+https://github.com/Azure/azure-functions-core-tools
+
+===================
+
+brew tap azure/function
+brew install azure-functions-core-tools@4
+brew search dos2unix
+brew install dos2unix
+
+func init cloudacademy-func1 --python
+cd cloudacademy-func1
+python3 -m venv venv
+source ./venv/bin/activate
+pip install -r requirements.txt
+
+func new --name cloudacademy --template "HTTP trigger" --authlevel "anonymous"
+func start
+
+git ls-files -z | xargs -0 dos2unix
+
+func azure functionapp publish cloudacademy-func1
+
+curl -D- https://cloudacademydevops-func1.azurewebsites.net/api/cloudacademy
+
+curl -D- https://cloudacademydevops-func1.azurewebsites.net/api/cloudacademy
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Date: Tue, 20 Sep 2022 05:46:00 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response
+
+az functionapp function show --function-name cloudacademy --name cloudacademydevops-func1 --resource-group cloudacademydevops-funcs --query "invokeUrlTemplate" --output tsv
+
+==========================
+
+wget https://github.com/Azure/azure-functions-core-tools/releases/download/4.0.4785/Azure.Functions.Cli.linux-x64.4.0.4785.zip
+unzip -d azure-functions-cli Azure.Functions.Cli.linux-x64.*.zip
+
+==========================
+
+az functionapp function show --function-name cloudacademy-fn1 --name cloudacademydevops-func-app --resource-group cloudacademydevops-funcs --query "invokeUrlTemplate" --output tsv
+
+curl -s https://cloudacademydevops-func-app.azurewebsites.net/api/cloudacademy-fn1?name=cloudacademy
+
+==========================
+
+source ./venv/bin/activate
+func new --name pi --template "HTTP trigger" --authlevel "anonymous"
+func start
+curl http://localhost:7071/api/pi2?num=1000
+cd ./cloudacademydevops-func-app
+func azure functionapp publish cloudacademydevops-func-app
+
+az functionapp function show --function-name pi --name cloudacademydevops-func-app --resource-group cloudacademydevops-funcs --query "invokeUrlTemplate" --output tsv
+
+curl -s https://cloudacademydevops-func-app.azurewebsites.net/api/pi?num=1000
+
+
+import logging
+import azure.functions as func
+
+
+def main(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('calculates pi to n decimal places...')
+
+    num = req.params.get('num')
+
+    if num:
+        digits = [str(n) for n in list(pi_digits(int(num)))]
+        pi = "%s.%s\n" % (digits.pop(0), "".join(digits))
+        return func.HttpResponse(pi, status_code=200)
+    else:
+        return func.HttpResponse(f"{str(0)}\n", status_code=200)
+
+def pi_digits(x):
+    k,a,b,a1,b1 = 2,4,1,12,4
+    while x > 0:
+        p,q,k = k * k, 2 * k + 1, k + 1
+        a,b,a1,b1 = a1, b1, p*a + q*a1, p*b + q*b1
+        d,d1 = a/b, a1/b1
+        while d == d1 and x > 0:
+            yield int(d)
+            x -= 1
+            a,a1 = 10*(a % b), 10*(a1 % b1)
+            d,d1 = a/b, a1/b1
+
+
+==========================
+
+
+func new --name bitcoin --template "HTTP trigger" --authlevel "anonymous"
+func start
+curl -i http://localhost:7071/api/bitcoin
+curl -s http://localhost:7071/api/bitcoin | jq .
+
+cd ./cloudacademydevops-func-app
+
+python3 -m pip install requests==2.28.1
+pip freeze > requirements.txt
+cat requirements.txt
+
+func azure functionapp publish cloudacademydevops-func-app
+
+az functionapp function show --function-name bitcoin --name cloudacademydevops-func-app --resource-group cloudacademydevops-funcs --query "invokeUrlTemplate" --output tsv
+
+curl -s https://cloudacademydevops-func-app.azurewebsites.net/api/bitcoin | jq .
+
+
+import logging
+import azure.functions as func
+import requests
+import json
+
+
+def main(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Python HTTP trigger function processed a request.')
+
+    data = ""
+    try:
+        response = requests.get('https://api.coindesk.com/v1/bpi/currentprice.json')
+        data = response.json()
+        print(data)
+
+        func.HttpResponse.mimetype = 'application/json'
+        func.HttpResponse.charset = 'utf-8'
+
+        return func.HttpResponse(json.dumps(data), status_code=200)
+    except:
+        pass
+
+    data = "invalid response from coindesk api"
+
+    func.HttpResponse.mimetype = 'text/plain'
+    func.HttpResponse.charset = 'utf-8'
+
+    return func.HttpResponse(data, status_code=503)
+
+
+==========================
+
+
+IMPORTAANT
+
+deactivate
+
+==========================
+
+for i in {1..100}; do curl -i https://cloudacademydevops-func-app.azurewebsites.net/api/fn-pi-random-error?num=10 && sleep 1; done;
+
+Application Insights
+cloudacademydevops

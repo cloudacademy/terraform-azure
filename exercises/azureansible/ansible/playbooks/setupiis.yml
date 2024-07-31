@@ -1,0 +1,82 @@
+---
+- hosts: azurevms
+  gather_facts: no
+  vars:
+    temp_dir: C:\Users\Administrator\Downloads
+    netcorehost_url: https://download.visualstudio.microsoft.com/download/pr/7ab0bc25-5b00-42c3-b7cc-bb8e08f05135/91528a790a28c1f0fe39845decf40e10/dotnet-hosting-6.0.16-win.exe
+    netcorehost_exe: "{{ temp_dir }}\\netcorehost6.exe"
+    netcorehost_log: "{{ temp_dir }}\\netcorehost6_log.txt"
+
+  tasks:
+
+  - name: install IIS features
+    win_feature:
+      name: 
+        - Web-Server
+        - Web-Common-Http
+        - Web-Mgmt-Service
+      include_management_tools: yes
+      state: present
+
+  - name: remove default web site
+    win_iis_website:
+      name: "Default Web Site"
+      state: absent
+
+  - name: start and set management service to auto
+    win_service:
+      name: WMSvc
+      start_mode: auto
+      state: started
+
+  - name: create temp directory
+    win_file:
+      path: "{{ temp_dir }}"
+      state: directory
+
+  # .NET Core 6 Hosting Bundle installation
+  - name: Download Microsoft .NET Core 6 hosting bundle installer
+    win_get_url:
+      url: "{{ netcorehost_url }}"
+      dest: "{{ netcorehost_exe }}"
+
+  - name: Stop IIS
+    win_shell: iisreset /STOP
+
+  - name: Run Microsoft .NET Core 6 hosting bundle installer
+    win_shell: "{{ netcorehost_exe }} /passive /AcceptEULA /log {{ netcorehost_log }}"
+
+  - name: Start IIS
+    win_shell: iisreset /START
+
+  - name: create logging directory
+    win_file:
+      path: c:\logs
+      state: directory
+
+  - name: create cloudacademy app pool
+    win_iis_webapppool:
+      name: cloudacademy
+      state: started
+      attributes:
+        managedRuntimeVersion: v4.0
+        managedPipelineMode: Integrated
+        processModel.identityType: ApplicationPoolIdentity
+        enable32BitAppOnWin64: True
+
+  - name: create cloudacademy IIS site
+    win_iis_website:
+      name: cloudacademy
+      state: started
+      port: 80
+      application_pool: cloudacademy
+      physical_path: c:\cloudacademy
+      parameters: logfile.directory:c:\logs
+    register: website
+
+  - name: configure static webapplication for wwwroot files
+    win_iis_webapplication:
+      name: wwwroot
+      site: cloudacademy
+      state: present
+      physical_path: C:\cloudacademy\wwwroot

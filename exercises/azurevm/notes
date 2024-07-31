@@ -1,0 +1,1 @@
+until [[ $(curl -sw '%{http_code}' -o /dev/null $(terraform output --raw vm_public_ip)) -eq 200 ]]; do echo preparing... && sleep 2; done; echo -e "\nReady...\n"
