@@ -1,20 +1,21 @@
 terraform {
-  required_version = ">= 1.5.0"
+  required_version = ">= 1.10.0"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.100"
+      version = "~> 4.3"
     }
-    template = {
-      source  = "hashicorp/template"
-      version = "~> 2.2"
-    }
+    cloudinit = {
+      source = "hashicorp/cloudinit"
+      version = "~> 2.3"
+    }    
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.6"
+      version = "~> 3.7"
     }
   }
 }
+
 
 provider "azurerm" {
   features {
@@ -22,12 +23,11 @@ provider "azurerm" {
       prevent_deletion_if_contains_resources = false
     }
   }
-  skip_provider_registration = true
-  tenant_id                  = var.tenant_id
-  subscription_id            = var.subscription_id
+  tenant_id       = var.tenant_id
+  subscription_id = var.subscription_id
 }
 
-provider "template" {
+provider "cloudinit" {
   # Configuration options
 }
 
@@ -186,7 +186,7 @@ resource "azurerm_lb_rule" "api" {
 #FRONTEND
 #================================
 
-data "template_cloudinit_config" "frontend" {
+data "cloudinit_config" "frontend" {
   gzip          = true
   base64_encode = true
 
@@ -257,7 +257,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "frontend" {
     }
   }
 
-  custom_data = data.template_cloudinit_config.frontend.rendered
+  custom_data = data.cloudinit_config.frontend.rendered
 
   tags = {
     org = "cloudacademy"
@@ -340,7 +340,7 @@ resource "azurerm_monitor_autoscale_setting" "web" {
 #API
 #================================
 
-data "template_cloudinit_config" "api" {
+data "cloudinit_config" "api" {
   gzip          = true
   base64_encode = true
 
@@ -402,7 +402,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "api" {
     }
   }
 
-  custom_data = data.template_cloudinit_config.api.rendered
+  custom_data = data.cloudinit_config.api.rendered
 
   tags = {
     org = "cloudacademy"

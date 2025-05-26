@@ -3,7 +3,6 @@ name: cloudacademydevops-func-app
 version: 0.1.4
 
 functions:
-  - name: fn-bitcoin
   - name: fn-cloudacademy
   - name: fn-pi
   - name: fn-pi-random-error

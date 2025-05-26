@@ -10,6 +10,9 @@ resource "terraform_data" "ansible" {
     interpreter = ["/bin/bash", "-c"]
     working_dir = "${path.module}/ansible"
     command     = <<EOT
+      #use virtualenv to support install of pypsrp
+      source venv/bin/activate 
+
       sleep 120 #time to allow VMs to come online and stabilize
       mkdir -p ./logs
 
@@ -30,7 +33,7 @@ resource "terraform_data" "ansible" {
 
       #ANSIBLE
       #use -vvv for extra verbosity
-      ansible-playbook -v -i hosts ./playbooks/master.yml || true
+      venv/bin/ansible-playbook -v -i hosts ./playbooks/master.yml || true
 
       #kill SOCKS5 port forwarding
       ssh -S /tmp/.ssh-azure-terraform-socks -O exit ${azurerm_public_ip.bastion.ip_address} || true

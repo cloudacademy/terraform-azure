@@ -1,22 +1,23 @@
 terraform {
-  required_version = ">= 1.5.0"
+  required_version = ">= 1.10.0"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.100"
+      version = "~> 4.3"
     }
   }
 }
 
 provider "azurerm" {
+  
   features {
     resource_group {
       prevent_deletion_if_contains_resources = false
     }
   }
-  skip_provider_registration = true
-  tenant_id                  = var.tenant_id
-  subscription_id            = var.subscription_id
+
+  tenant_id       = var.tenant_id
+  subscription_id = var.subscription_id
 }
 
 #RESOURCEGROUP
@@ -32,13 +33,13 @@ resource "azurerm_resource_group" "cloudacademydevops" {
 
 #tfsec:ignore:azure-storage-use-secure-tls-policy
 resource "azurerm_storage_account" "sa" {
-  name                      = "cloudacademydevopsfuncs"
-  resource_group_name       = azurerm_resource_group.cloudacademydevops.name
-  location                  = azurerm_resource_group.cloudacademydevops.location
-  account_tier              = "Standard"
-  account_replication_type  = "LRS"
-  account_kind              = "StorageV2"
-  enable_https_traffic_only = true
+  name                        = "cloudacademydevopsfuncs"
+  resource_group_name         = azurerm_resource_group.cloudacademydevops.name
+  location                    = azurerm_resource_group.cloudacademydevops.location
+  account_tier                = "Standard"
+  account_replication_type    = "LRS"
+  account_kind                = "StorageV2"
+  https_traffic_only_enabled  = true
 }
 
 #SERVICE PLAN
