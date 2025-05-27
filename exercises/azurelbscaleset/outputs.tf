@@ -15,5 +15,11 @@ output "jumpbox_public_ip" {
 
 output "web_app_wait_command" {
   value       = "until curl -s --max-time 5 http://${azurerm_public_ip.loadbalancer.fqdn} | grep -i vote >/dev/null 2>&1; do echo preparing...; sleep 5; done; echo; echo -e 'Ready!!'"
-  description = "Test command - tests readiness of the web app"
+  description = "test command - tests readiness of the web app"
+}
+
+output "main_subnet_address_prefixes" {
+  value       = azurerm_subnet.main.address_prefixes
+  description = "main subnet address prefixes"
+  
 }

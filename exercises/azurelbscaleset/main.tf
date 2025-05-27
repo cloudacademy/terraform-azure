@@ -46,16 +46,21 @@ resource "azurerm_resource_group" "cloudacademydevops" {
 #NETWORK
 #================================
 
-resource "random_string" "fqdn" {
-  length  = 6
-  special = false
-  upper   = false
-  numeric = false
+variable "vnet_address_space" {
+  description = "Base address space for the virtual network"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable "subnet_prefix_length" {
+  description = "Prefix length for the subnet"
+  type        = number
+  default     = 24
 }
 
 resource "azurerm_virtual_network" "prod" {
   name                = "cloudacademy-voteapp-prod"
-  address_space       = ["10.0.0.0/16"]
+  address_space       = [var.vnet_address_space]
   location            = var.location
   resource_group_name = azurerm_resource_group.cloudacademydevops.name
 
@@ -69,7 +74,23 @@ resource "azurerm_subnet" "main" {
   name                 = "main"
   resource_group_name  = azurerm_resource_group.cloudacademydevops.name
   virtual_network_name = azurerm_virtual_network.prod.name
-  address_prefixes     = ["10.0.0.0/24"]
+  
+  address_prefixes = [
+    cidrsubnet(
+      var.vnet_address_space,
+      var.subnet_prefix_length - tonumber(regex(".*\\/(\\d+)", var.vnet_address_space)[0]),
+      0
+    )
+  ]
+}
+
+#================================
+
+resource "random_string" "fqdn" {
+  length  = 6
+  special = false
+  upper   = false
+  numeric = false
 }
 
 resource "azurerm_network_security_group" "voteapp" {
