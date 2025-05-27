@@ -46,18 +46,6 @@ resource "azurerm_resource_group" "cloudacademydevops" {
 #NETWORK
 #================================
 
-variable "vnet_address_space" {
-  description = "Base address space for the virtual network"
-  type        = string
-  default     = "10.0.0.0/16"
-}
-
-variable "subnet_prefix_length" {
-  description = "Prefix length for the subnet"
-  type        = number
-  default     = 24
-}
-
 resource "azurerm_virtual_network" "prod" {
   name                = "cloudacademy-voteapp-prod"
   address_space       = [var.vnet_address_space]
