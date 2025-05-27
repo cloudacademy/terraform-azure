@@ -17,6 +17,18 @@ variable "location" {
   description = "azure region"
 }
 
+variable "vnet_address_space" {
+  description = "Base address space for the virtual network"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable "subnet_prefix_length" {
+  description = "Prefix length for the subnet"
+  type        = number
+  default     = 24
+}
+
 variable "voteapp_nsg_rules" {
   type = list(object({
     name                       = string
